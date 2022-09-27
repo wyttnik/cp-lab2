@@ -11,12 +11,10 @@ describe("set", () => {
         expect(c._cache.get('color').refCount).toBe(2);
     });
 
-    test('cache set with missed value or reference count', () => {
+    test('cache set with missed reference count', () => {
         const c = new Cache();
-        c.set('name',3);
-        c.set('color','green')
+        c.set('color','green');
 
-        expect(c._cache.get('name').val).toBe(undefined);
         expect(c._cache.get('color').refCount).toBe(1);
     });
 
@@ -97,7 +95,7 @@ describe("get", () => {
 
     test('null return if value is missing check', () => {
         const c = new Cache();
-        c.set('name',2);
+        c.set('name');
 
         expect(c.get('name')).toBe(null);
     });
