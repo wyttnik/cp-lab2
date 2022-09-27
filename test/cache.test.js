@@ -1,6 +1,14 @@
 import {Cache} from "../src/cache";
 describe("set", () => {
-    test('cache full set', () => {
+    test('cache size after setting check', () => {
+        const c = new Cache();
+        c.set('color','green');
+        c.set('name')
+
+        expect(c._cache.size).toBe(2);
+    });
+
+    test('cache all parameters set check', () => {
         const c = new Cache();
         c.set('name','John',3);
         c.set('color','green',2);
@@ -51,6 +59,15 @@ describe("set", () => {
         expect(c._cache.has('color')).toBe(false);
         expect(c._cache.has('feature')).toBe(false);
     });
+
+    test('empty key case', () => {
+        const c = new Cache();
+        c.set()
+        c.set()
+        c.set()
+
+        expect(c._cache.size).toBe(0);
+    });
 });
 
 describe("get", () => {
@@ -79,6 +96,7 @@ describe("get", () => {
         c.get('name');
 
         expect(c._cache.has('name')).toBe(false);
+        expect(c._cache.size).toBe(0);
     });
 
     test('null return if key is missing check', () => {
