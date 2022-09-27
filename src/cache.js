@@ -1,16 +1,10 @@
-
 class Cache{
     constructor() {
-		this._cache = new Map();
-	}
+        this._cache = new Map();
+    }
 
-    set = (key, value = undefined, count = 1) => {
-        // don't know how to handle situation like ('name',3)
-        // somewhat of solution
+    set = (key, value, count = 1) => {
         if (count <= 0) return;
-        if (Number.isInteger(value)) {
-            this._cache.set(key, {val: undefined, refCount: value});
-        }
         else this._cache.set(key, {val: value, refCount: count});
     };
 
@@ -28,8 +22,8 @@ class Cache{
         console.log(this._cache);
         const arr = [];
         this._cache.forEach((value,key) => arr.push({key,
-                                           value:value.val,
-                                           refCount:value.refCount}));
+            value:value.val,
+            refCount:value.refCount}));
         alert(JSON.stringify(arr));
     }
 }
