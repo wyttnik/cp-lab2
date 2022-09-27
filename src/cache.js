@@ -11,7 +11,6 @@ class Cache{
 
     get = (key) => {
         const res = this._cache.get(key);
-        // if key is missing -> null
         if (res === undefined) return null;
         this._cache.set(key, {val: res.val, refCount: res.refCount - 1});
         if (res.refCount - 1 === 0) this._cache.delete(key);
