@@ -11,10 +11,17 @@ class Cache{
 
     get = (key) => {
         const res = this._cache.get(key);
+        // if key is missing -> null
         if (res === undefined) return null;
         this._cache.set(key, {val: res.val, refCount: res.refCount - 1});
         if (res.refCount - 1 === 0) this._cache.delete(key);
         return res.val === undefined ? null : res.val;
+    };
+
+    getRefCount(key) {
+        const res = this._cache.get(key);
+        if (res === undefined) return null;
+        return res.refCount;
     };
 
     getStatistic() {
@@ -23,6 +30,10 @@ class Cache{
             value:value.val,
             refCount:value.refCount}));
         alert(JSON.stringify(arr));
+    }
+
+    getSize() {
+        return this._cache.size;
     }
 }
 export {Cache}
