@@ -1,11 +1,28 @@
 import {Cache} from "../src/cache";
+test('size check', () => {
+    const c = new Cache();
+    c.set('color','green');
+    c.set('name');
+
+    expect(c.getSize()).toBe(2);
+});
+
+test('get reference count by key', () => {
+    const c = new Cache();
+    c.set('color','green',4);
+    expect(c.getRefCount('color')).toBe(4);
+
+    c.set('name','John');
+    expect(c.getRefCount('name')).toBe(1);
+});
+
 describe("set", () => {
     test('cache size after setting check', () => {
         const c = new Cache();
         c.set('color','green');
-        c.set('name')
+        c.set('name');
 
-        expect(c._cache.size).toBe(2);
+        expect(c.getSize()).toBe(2);
     });
 
     test('cache all parameters set check', () => {
@@ -13,17 +30,17 @@ describe("set", () => {
         c.set('name','John',3);
         c.set('color','green',2);
 
-        expect(c._cache.get('name').val).toBe('John');
-        expect(c._cache.get('name').refCount).toBe(3);
-        expect(c._cache.get('color').val).toBe('green');
-        expect(c._cache.get('color').refCount).toBe(2);
+        expect(c.getRefCount('name')).toBe(3);
+        expect(c.get('name')).toBe('John');
+        expect(c.getRefCount('color')).toBe(2);
+        expect(c.get('color')).toBe('green');
     });
 
     test('cache set with missed reference count', () => {
         const c = new Cache();
         c.set('color','green');
 
-        expect(c._cache.get('color').refCount).toBe(1);
+        expect(c.getRefCount('color')).toBe(1);
     });
 
 
@@ -31,8 +48,8 @@ describe("set", () => {
         const c = new Cache();
         c.set('name');
 
-        expect(c._cache.get('name').val).toBe(undefined);
-        expect(c._cache.get('name').refCount).toBe(1);
+        expect(c.getRefCount('name')).toBe(1);
+        expect(c.get('name')).toBe(null);
     });
 
     test('cache set overwrite', () => {
@@ -40,13 +57,13 @@ describe("set", () => {
         c.set('name','John',5);
         c.set('name','David',2);
 
-        expect(c._cache.get('name').val).toBe('David');
-        expect(c._cache.get('name').refCount).toBe(2);
-
+        expect(c.getRefCount('name')).toBe(2);
+        expect(c.get('name')).toBe('David');
+        
         c.set('name');
 
-        expect(c._cache.get('name').val).toBe(undefined);
-        expect(c._cache.get('name').refCount).toBe(1);
+        expect(c.getRefCount('name')).toBe(1);
+        expect(c.get('name')).toBe(null);
     });
 
     test('negative or zero reference count case', () => {
@@ -55,9 +72,9 @@ describe("set", () => {
         c.set('color','red',-5);
         c.set('feature','rusty',0);
 
-        expect(c._cache.size).toBe(1);
-        expect(c._cache.has('color')).toBe(false);
-        expect(c._cache.has('feature')).toBe(false);
+        expect(c.getSize()).toBe(1);
+        expect(c.get('color')).toBe(null);
+        expect(c.get('feature')).toBe(null);
     });
 
     test('empty key case', () => {
@@ -66,7 +83,7 @@ describe("set", () => {
         c.set()
         c.set()
 
-        expect(c._cache.size).toBe(0);
+        expect(c.getSize()).toBe(0);
     });
 });
 
@@ -86,7 +103,7 @@ describe("get", () => {
         c.get('name');
         c.get('name');
 
-        expect(c._cache.get('name').refCount).toBe(1);
+        expect(c.getRefCount('name')).toBe(1);
     });
 
     test('zero reference count deletion check', () => {
@@ -95,8 +112,8 @@ describe("get", () => {
         c.get('name');
         c.get('name');
 
-        expect(c._cache.has('name')).toBe(false);
-        expect(c._cache.size).toBe(0);
+        expect(c.get('name')).toBe(null);
+        expect(c.getSize()).toBe(0);
     });
 
     test('null return if key is missing check', () => {
